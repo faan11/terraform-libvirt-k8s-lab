@@ -1,9 +1,8 @@
 ---
-  - name: Wait for SSH
-    wait_for:
-      port: 22
-    vars:
-      ansible_connection: local
+#  - name: Wait for SSH
+#    wait_for:
+#      port: 22
+#    delegate_to: localhost
 
   - name: Wait for k8s utilities to be installed
     wait_for:
@@ -47,11 +46,11 @@
       owner: root
       group: root
       mode: 0750
-    # vars:
+    #      vars:
     #   HOST2_ID: k8s-controllers-2
+    #   HOST2_ADDRESS: 10.17.3.2
     #   HOST3_ID: k8s-controllers-3
     #   HOST4_ID: k8s-controllers-4
-    #   HOST2_ADDRESS: 10.17.3.2
     #   HOST3_ADDRESS: 10.17.3.3
     #   HOST4_ADDRESS: 10.17.3.4
 
@@ -64,27 +63,33 @@
       group: root
       mode: 0640
 
+#  - name: Clean containerd
+#    become: true
+#       command: systemctl restart containerd 
+#   when: ansible_facts['default_ipv4']['address'] == "10.17.3.2"
+  
   - name: Initialize the Kubernetes cluster using kubeadm
     become: true
-    command: kubeadm init --control-plane-endpoint '10.17.3.254:8080' --upload-certs --ignore-preflight-errors=DirAvailable--etc-kubernetes-manifests
+    command: kubeadm init --control-plane-endpoint '10.17.3.254' --apiserver-bind-port 6443
+      #--upload-certs --ignore-preflight-errors=DirAvailable--etc-kubernetes-manifests
     when: ansible_facts['default_ipv4']['address'] == "10.17.3.2"
 
-  - name: Generate a control plane certificate for HA nodes
-    become: true
-    shell: kubeadm init phase upload-certs --upload-certs 2> /dev/null|tail -n 1
-    register: join_certificate
-    when: ansible_facts['default_ipv4']['address'] == "10.17.3.2"
+#  - name: Generate a control plane certificate for HA nodes
+#    become: true
+#    shell: kubeadm init phase upload-certs --upload-certs 2> /dev/null|tail -n 1
+#    register: join_certificate
+#   when: ansible_facts['default_ipv4']['address'] == "10.17.3.2"
 
-  - name: Initialize the Kubernetes cluster using kubeadm
-    become: true
-    shell: kubeadm token create --print-join-command --certificate-key {{join_certificate.stdout}} | echo "$(cat -) --ignore-preflight-errors=DirAvailable--etc-kubernetes-manifests"
-    register: join_command
-    when: ansible_facts['default_ipv4']['address'] == "10.17.3.2"
+#  - name: Initialize the Kubernetes cluster using kubeadm
+#    become: true
+#    shell: kubeadm token create --print-join-command --certificate-key {{join_certificate.stdout}} | echo "$(cat -) --ignore-preflight-errors=DirAvailable--etc-kubernetes-manifests"
+#    register: join_command
+#    when: ansible_facts['default_ipv4']['address'] == "10.17.3.2"
 
-  - name: Set join control plane command
-    set_fact:
-      join_control_plane_command: '{{join_command.stdout}}'
-    when: ansible_facts['default_ipv4']['address'] == "10.17.3.2"
+#  - name: Set join control plane command
+#    set_fact:
+#      join_control_plane_command: '{{join_command.stdout}}'
+#    when: ansible_facts['default_ipv4']['address'] == "10.17.3.2"
 
   - name: Wait for kube api to be available, then set up CNI overlay
     wait_for:
