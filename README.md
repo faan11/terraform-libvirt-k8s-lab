@@ -27,18 +27,21 @@ To use this repository you will need the following on your local machine:
 * [terraform-provider-libvirt](https://github.com/dmacvicar/terraform-provider-libvirt)
 * Enough CPU, RAM, and disk space to run two libvirt guests - the more the better!
 
+For ansible script:
+- gantsign.helm
+
 ## Using this repository
 
-**Before using terraform** add your **public*** key, excluding the `ssh-rsa` prefix in the various `variables.tf` files corresponding sections:
+**Before using terraform** add your **public*** key, in the various `terraform/k8s/variables.tf` files corresponding sections:
 
 ```
 variable "ssh-public-key" {
-  description = "ssh-rsa key for terraform-libvirt user"
+  description = "key for terraform-libvirt user"
   default     = "<KEY GOES HERE>"
 }
 ```
 
-Running `terraform apply` with no variable arguments will create 5 Kubernetes nodes - 3 control plane, and 2 nodes for workloads. Each will use 2 CPUs, and have 2GB of RAM allocated.
+Running `terraform apply` with no variable arguments will create 3 Kubernetes nodes - 1 control plane, and 2 nodes for workloads. Each will use 2 CPUs, and have 2GB of RAM allocated.
 
 **Before using ansible** you need to add the following to your `~/.ssh/config` to avoid having fingerprint check botch your ansible configuration:
 
@@ -57,8 +60,6 @@ Each of the VMs has a static IP address for ease of access and keeping track of 
 
 ```
 k8s-controller-2 10.17.3.2
-k8s-controller-3 10.17.3.3
-k8s-controller-4 10.17.3.4
 
 k8s-nodes-2 10.17.3.10
 k8s-nodes-3 10.17.3.11
