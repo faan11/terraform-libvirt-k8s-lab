@@ -1,0 +1,7 @@
+all:
+    hosts:
+      cpnode:
+        ansible_port: 22
+        ansible_host: 10.0.0.216
+        ansible_ssh_user: cp 
+        ansible_ssh_private_key_file: ../keys/main 
