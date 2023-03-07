@@ -71,6 +71,6 @@ variable "nodes-volume-prefix" {
 }
 
 variable "ssh-public-key" {
-  description = "ssh-rsa key for terraform-libvirt user"
+  description = "ssh key for terraform-libvirt user"
   default     = ""
 }
