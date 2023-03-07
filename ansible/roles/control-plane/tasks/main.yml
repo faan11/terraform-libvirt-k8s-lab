@@ -38,11 +38,7 @@
       mode: 0750
     vars:
       HOST2_ID: k8s-controllers-2
-      HOST3_ID: k8s-controllers-3
-      HOST4_ID: k8s-controllers-4
       HOST2_ADDRESS: 10.17.3.2
-      HOST3_ADDRESS: 10.17.3.3
-      HOST4_ADDRESS: 10.17.3.4
 
   - name: Copy haproxy manifest to control plane
     become: true
